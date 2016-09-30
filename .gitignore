@@ -1,3 +1,6 @@
 contracts/zeppelin/
 node_modules/
 build/
+*.swp
+*.swo
+
