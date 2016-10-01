@@ -3,47 +3,10 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import './index.css';
 import Web3 from 'web3'
+import poe from './api/poe';
 
 var accounts;
 var account;
-
-function notarize(string) {
-  var poe = ProofOfExistence.deployed();
-  poe.notarize(string, {from: account}).then(()=>{
-
-  }).catch(function(e) {
-    console.log(e);
-  });
-}
-
-function checkDocument(string){
-  var poe = ProofOfExistence.deployed();
-  return poe.checkDocument.call(string, {from: account}).then(result=>{
-    console.log(result)
-  }).catch(function(e) {
-    console.log(e);
-  });
-}
-
-function calculateProof(string){
-  var poe = ProofOfExistence.deployed();
-  return poe.calculateProof.call(string, {from: account}).then(result=>{
-    console.log(result)
-    return result
-  }).catch(function(e) {
-    console.log(e);
-  });
-}
-
-function hasProof(hash){
-  var poe = ProofOfExistence.deployed();
-  poe.hasProof.call(hash, {from: account}).then(result=>{
-    console.log(hash, result)
-  }).catch(function(e) {
-    console.log(e);
-  });
-}
-
 
 function setup(){
   return new Promise(function(resolve,reject){
@@ -86,10 +49,14 @@ window.onload = function() {
       accounts = accs;
       account = accounts[0];
 
-      console.log('notarize', notarize('jeff is awesome'));
+      poe.setup(ProofOfExistence, account)
 
-      checkDocument('jeff is awesome');
-      checkDocument('jeff is awesomer');
+      console.log('notarize', poe.notarize('jeff is awesome'));
+
+      poe.checkDocument('jeff is awesome');
+      poe.checkDocument('jeff is awesomer');
+      poe.notarize('jeff is super awesome')
+      poe.checkDocument('jeff is super awesome');
 
     });
   })
