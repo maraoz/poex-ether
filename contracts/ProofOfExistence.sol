@@ -14,9 +14,10 @@ contract ProofOfExistence is Rejector {
   }
 
   // calculate and store the proof for a document
-  function notarize(string document) {
+  function notarize(string document) returns(bytes32) {
     var proof = calculateProof(document);
     storeProof(proof);
+    return proof;
   }
 
   // helper function to get a document's sha256
