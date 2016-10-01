@@ -7,41 +7,42 @@ import Web3 from 'web3'
 var accounts;
 var account;
 
-function setStatus(message) {
-  var status = document.getElementById("status");
-  status.innerHTML = message;
-};
+function notarize(string) {
+  var poe = ProofOfExistence.deployed();
+  poe.notarize(string, {from: account}).then(()=>{
 
-function refreshBalance() {
-  var meta = MetaCoin.deployed();
-
-  console.log(meta)
-
-  meta.getBalance.call(account, {from: account}).then(function(value) {
-    var balance_element = document.getElementById("balance");
-    balance_element.innerHTML = value.valueOf();
   }).catch(function(e) {
     console.log(e);
-    setStatus("Error getting balance; see log.");
   });
-};
+}
 
-function sendCoin() {
-  var meta = MetaCoin.deployed();
-
-  var amount = parseInt(document.getElementById("amount").value);
-  var receiver = document.getElementById("receiver").value;
-
-  setStatus("Initiating transaction... (please wait)");
-
-  meta.sendCoin(receiver, amount, {from: account}).then(function() {
-    setStatus("Transaction complete!");
-    refreshBalance();
+function checkDocument(string){
+  var poe = ProofOfExistence.deployed();
+  return poe.checkDocument.call(string, {from: account}).then(result=>{
+    console.log(result)
   }).catch(function(e) {
     console.log(e);
-    setStatus("Error sending coin; see log.");
   });
-};
+}
+
+function calculateProof(string){
+  var poe = ProofOfExistence.deployed();
+  return poe.calculateProof.call(string, {from: account}).then(result=>{
+    console.log(result)
+    return result
+  }).catch(function(e) {
+    console.log(e);
+  });
+}
+
+function hasProof(hash){
+  var poe = ProofOfExistence.deployed();
+  poe.hasProof.call(hash, {from: account}).then(result=>{
+    console.log(hash, result)
+  }).catch(function(e) {
+    console.log(e);
+  });
+}
 
 
 function setup(){
@@ -69,7 +70,6 @@ function setup(){
 window.onload = function() {
   setup().then(({ web3, provider, read_only})=>{
     ProofOfExistence.setProvider(provider);
-    MetaCoin.setProvider(provider);
     web3.eth.getAccounts(function(err, accs) {
       if (err != null) {
         console.log(err)
@@ -86,7 +86,11 @@ window.onload = function() {
       accounts = accs;
       account = accounts[0];
 
-      refreshBalance();
+      console.log('notarize', notarize('jeff is awesome'));
+
+      checkDocument('jeff is awesome');
+      checkDocument('jeff is awesomer');
+
     });
   })
 }
